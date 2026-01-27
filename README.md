@@ -1,16 +1,21 @@
 Project Overview
 
-A simple Django application demonstrating Stripe payment integration with three fixed products. Paid orders are displayed immediately after successful payment.
+A simple Django application demonstrating Stripe payment integration with three fixed products.
+After a successful payment, the paid order is displayed immediately on the same page.
+
+This project was built as part of a technical assignment for VipraTech Labs Pvt. Ltd.
 
 Assumptions Made
 
 Only three fixed products are available.
 
-Payment flow is in Stripe test mode.
+Payment is handled in Stripe test mode.
 
-User authentication is optional and not implemented (or mentioned if implemented).
+User authentication is optional and not implemented.
 
-Orders are displayed immediately after payment without a separate order history page.
+Orders are displayed immediately after payment; no separate order history page exists.
+
+SQLite is used for simplicity (can be switched to PostgreSQL/MySQL).
 
 Stripe Flow Choice and Reasoning
 
@@ -18,87 +23,78 @@ Flow Used: Stripe Checkout Session (redirect-based)
 
 Reasoning:
 
-Simple and secure for a fixed-product scenario.
+Secure and easy to implement for a fixed-product scenario.
 
-Handles card input and validation on Stripe’s hosted page → reduces PCI compliance complexity.
+Card details are handled entirely by Stripe, reducing PCI compliance complexity.
 
-Automatic payment status tracking and success/failure redirects make it ideal for a quick demo project.
+Stripe manages validation, success, and failure handling.
+
+Ideal for assignments and demos where correctness and clarity matter more than complexity.
 
 Double-Charge Prevention Strategy
 
-Each order is assigned a unique stripe_session_id.
+Each order stores a unique stripe_session_id.
 
-Before marking an order as PAID, the system checks if that stripe_session_id already exists in the database.
+Before marking an order as PAID, the system verifies that the session ID has not already been processed.
 
-This prevents accidental double-processing of the same session.
+This prevents duplicate charges if the success URL is refreshed.
 
-Optional: Use Stripe webhooks in production for extra reliability (not required in test/demo mode).
+In real production systems, Stripe Webhooks would be used for maximum reliability (not required for this assignment).
 
 Setup Instructions
+1️⃣ Clone the Repository
+git clone https://github.com/Sourabh2517x/VIPRA_ASSIGNMENT.git
+cd VIPRA_ASSIGNMENT
 
-Clone the repository
+All Django commands must be run from the directory containing manage.py.
 
-git clone <repo-url>
-cd <project-folder>
+2️⃣ Create Virtual Environment & Install Dependencies
+python -m venv venv
 
-Create virtual environment & install dependencies
 
-python -m venv VE
-source VE/bin/activate   # Linux/Mac
-VE\Scripts\activate      # Windows
+# Activate virtual environment
+# Linux / Mac
+source venv/bin/activate
+
+
+# Windows
+venv\Scripts\activate
+
+
 pip install -r requirements.txt
+3️⃣ Environment Variables
 
-Set up database
+Create a .env file in the project root (same level as manage.py) using .env.example.
 
-Default is SQLite (already configured)
+STRIPE_PUBLIC_KEY=pk_test_xxxxxxxxxxxxx
+STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxxx
 
-Optional: Switch to PostgreSQL or MySQL in settings.py
+Environment variables are loaded using python-dotenv in settings.py.
 
-Add .env file
-
-Copy .env.example to .env and fill in your Stripe keys:
-
-STRIPE_PUBLIC_KEY=<your-stripe-public-key>
-STRIPE_SECRET_KEY=<your-stripe-secret-key>
-
-Apply migrations
-
+4️⃣ Apply Migrations
 python manage.py migrate
-
-Create superuser (optional for admin panel)
-
+5️⃣ (Optional) Create Superuser
 python manage.py createsuperuser
-
-Run the server
-
+6️⃣ Run the Server
 python manage.py runserver
 
-Visit http://127.0.0.1:8000 to view products and make test payments.
+Visit:
+👉 http://127.0.0.1:8000
 
 Notes on Code Quality
 
-Clear model separation (ProductModel, Order) with readable fields.
+Clear separation between ProductModel and Order.
 
-Payment logic encapsulated in a single view for simplicity.
+Payment logic kept minimal and readable.
 
-Minimal hardcoding — product details can be expanded via Django admin.
+No unnecessary abstractions — clarity over over-engineering.
 
-Comments included for all key sections, making it easy to maintain.
+Inline comments explain key logic.
 
-Basic error handling for invalid sessions or duplicate payments.
+Defensive checks added for invalid or duplicate Stripe sessions.
 
-AI-Assist Documentation (AI-assist.md)
+Structure follows standard Django best practices.
 
-Tools used: ChatGPT (GPT-5 mini)
+AI-Assist Documentation
 
-Where applied:
-
-Initial project structure planning
-
-Stripe payment flow guidance
-
-README, .env.example, and doc writing
-
-Troubleshooting model/database issues
-
-Code quality suggestions
+See AI-assist.md for full details on tools used and how they assisted development.
