@@ -1,100 +1,141 @@
-Project Overview
+# Django Stripe Payment Demo
 
-A simple Django application demonstrating Stripe payment integration with three fixed products.
-After a successful payment, the paid order is displayed immediately on the same page.
+A simple Django application demonstrating **Stripe payment integration** with **three fixed products**. After a successful payment, the paid order is displayed immediately on the **My Orders**.
 
-This project was built as part of a technical assignment for VipraTech Labs Pvt. Ltd.
+This project was built as part of a **technical assignment for VipraTech Labs Pvt. Ltd.**
 
-Assumptions Made
+---
 
-Only three fixed products are available.
+## 📌 Project Overview
 
-Payment is handled in Stripe test mode.
+* Three fixed products displayed on a single page
+* User selects quantities and clicks **Buy**
+* Payment processed via **Stripe (test mode)**
+* After successful payment, the **paid order appears instantly** on the My Orders page
 
-User authentication is optional and not implemented.
+---
 
-Orders are displayed immediately after payment; no separate order history page exists.
+## ✅ Assumptions Made
 
-SQLite is used for simplicity (can be switched to PostgreSQL/MySQL).
+* Only **three fixed products** are available
+* Payments run in **Stripe test mode**
+* **User authentication is optional** and not implemented
+* Orders are shown immediately after payment
+* **SQLite** is used for simplicity later switched to postgress
 
-Stripe Flow Choice and Reasoning
+---
 
-Flow Used: Stripe Checkout Session (redirect-based)
+## 💳 Stripe Flow Choice & Reasoning
 
-Reasoning:
+**Flow Used:** Stripe Checkout Session (redirect-based)
 
-Secure and easy to implement for a fixed-product scenario.
+**Why this approach?**
 
-Card details are handled entirely by Stripe, reducing PCI compliance complexity.
+* Secure and quick to implement for fixed products
+* Card details are handled entirely by Stripe (reduced PCI complexity)
+* Stripe manages validation, success, and failure states
+* Ideal for demos and assignments where clarity > complexity
 
-Stripe manages validation, success, and failure handling.
+---
 
-Ideal for assignments and demos where correctness and clarity matter more than complexity.
+## 🔒 Double-Charge Prevention Strategy
 
-Double-Charge Prevention Strategy
+* Each order stores a unique `stripe_session_id`
+* Before marking an order as **PAID**, the system checks whether the session ID was already processed
+* Prevents duplicate charges if the success URL is refreshed
 
-Each order stores a unique stripe_session_id.
+> ⚠️ In production systems, **Stripe Webhooks** should be used for maximum reliability (not required for this assignment)
 
-Before marking an order as PAID, the system verifies that the session ID has not already been processed.
+---
 
-This prevents duplicate charges if the success URL is refreshed.
+## ⚙️ Setup Instructions
 
-In real production systems, Stripe Webhooks would be used for maximum reliability (not required for this assignment).
+### 1️⃣ Clone the Repository
 
-Setup Instructions
-1️⃣ Clone the Repository
+```bash
 git clone https://github.com/Sourabh2517x/VIPRA_ASSIGNMENT.git
 cd VIPRA_ASSIGNMENT
+```
 
-All Django commands must be run from the directory containing manage.py.
+> All Django commands must be run from the directory containing `manage.py`
 
-2️⃣ Create Virtual Environment & Install Dependencies
-python -m venv venv
+---
 
+### 2️⃣ Create Virtual Environment & Install Dependencies
 
-# Activate virtual environment
-# Linux / Mac
-source venv/bin/activate
+```bash
+python -m venv VE
+```
 
+**Activate the virtual environment**
 
-# Windows
-venv\Scripts\activate
+* **Linux / Mac**
 
+  ```bash
+  source VE/bin/activate
+  ```
+* **Windows**
 
+  ```bash
+  VE\Scripts\activate
+  ```
+
+```bash
 pip install -r requirements.txt
-3️⃣ Environment Variables
+```
 
-Create a .env file in the project root (same level as manage.py) using .env.example.
+---
 
+### 3️⃣ Environment Variables
+
+Create a `.env` file in the project root (same level as `manage.py`) using `.env.example`.
+
+```env
 STRIPE_PUBLIC_KEY=pk_test_xxxxxxxxxxxxx
 STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxxx
+```
 
-Environment variables are loaded using python-dotenv in settings.py.
+Environment variables are loaded using **python-dotenv** in `settings.py`.
 
-4️⃣ Apply Migrations
+---
+
+### 4️⃣ Apply Migrations
+
+```bash
 python manage.py migrate
-5️⃣ (Optional) Create Superuser
+```
+
+---
+
+### 5️⃣ (Optional) Create Superuser
+
+```bash
 python manage.py createsuperuser
-6️⃣ Run the Server
+```
+
+---
+
+### 6️⃣ Run the Server
+
+```bash
 python manage.py runserver
+```
 
-Visit:
-👉 http://127.0.0.1:8000
+Visit 👉 **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
 
-Notes on Code Quality
+---
 
-Clear separation between ProductModel and Order.
+## 🧠 Notes on Code Quality
 
-Payment logic kept minimal and readable.
+* Clear separation between **Product** and **Order** models
+* Minimal and readable payment logic
+* No unnecessary abstractions — clarity over over-engineering
+* Inline comments explain key logic
+* Defensive checks for invalid or duplicate Stripe sessions
+* Follows standard Django project structure and best practices
 
-No unnecessary abstractions — clarity over over-engineering.
+---
 
-Inline comments explain key logic.
+## 🤖 AI-Assist Documentation
 
-Defensive checks added for invalid or duplicate Stripe sessions.
-
-Structure follows standard Django best practices.
-
-AI-Assist Documentation
-
-See AI-assist.md for full details on tools used and how they assisted development.
+See **AI-assist.md** for full details on tools used and how they assisted development.
