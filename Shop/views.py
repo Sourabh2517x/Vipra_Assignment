@@ -3,18 +3,17 @@ from .models import ProductModel,Order
 import stripe
 from django.conf import settings
 from django.shortcuts import redirect,redirect, get_object_or_404
-# Create your views here.
+from django.urls import reverse
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
 def index(request):
     product_objects = ProductModel.objects.all()
         
     return render(request,'Shop/index.html',{'product_objects':product_objects})
 
 
-
-stripe.api_key = settings.STRIPE_SECRET_KEY
-
-
-# views.py
 def create_checkout_session(request, product_id):
     product = get_object_or_404(ProductModel, id=product_id)
 
@@ -36,8 +35,8 @@ def create_checkout_session(request, product_id):
             "quantity": quantity,  # now from user input
         }],
         mode="payment",
-        success_url="http://127.0.0.1:8000/myorders/",
-        cancel_url="http://127.0.0.1:8000/",
+        success_url=request.build_absolute_uri(reverse("myorder")),
+        cancel_url=request.build_absolute_uri(reverse("index"))
     )
 
     # Save the order in DB
